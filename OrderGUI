@@ -1,0 +1,83 @@
+package Human;
+
+import java.awt.Font;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+
+import com.toedter.calendar.JDateChooser;
+
+public class OrderGUI extends JFrame{
+	JFrame jf = new JFrame("Order");
+	
+	JLabel lbOrder = new JLabel("Order");
+	JLabel lbOrderId = new JLabel("OrderId");
+	JLabel lbOrderDate = new JLabel("OrderDate");
+	JLabel lbId = new JLabel("Id");
+	JLabel lbProductId = new JLabel("ProductId");
+	JLabel lbQuantityOrder = new JLabel("QuantityOrder");
+	
+	JTextField tfOrderId = new JTextField();
+	JDateChooser tfOrderDate = new JDateChooser();
+	JTextField tfId = new JTextField();
+	JTextField tfProductId = new JTextField();
+	JTextField tfQuantityOrder = new JTextField();
+	
+	public OrderGUI() {
+		jf.setLayout(null);
+		
+		lbOrder.setBounds(160,30,150,50);
+		lbOrder.setFont(new Font("Tahoma", Font.BOLD, 28));
+		jf.add(lbOrder);
+		
+		lbOrderId.setBounds(50, 100, 100, 30);
+		lbOrderId.setFont(new Font("Tahoma", 0, 16));
+		jf.add(lbOrderId);
+		
+		tfOrderId.setBounds(150, 100, 200, 30);
+		tfOrderId.setFont(new Font("Tahoma", 0, 16));
+		jf.add(tfOrderId);
+		
+		lbOrderDate.setBounds(50, 150, 100, 30);
+		lbOrderDate.setFont(new Font("Tahoma", 0, 16));
+		jf.add(lbOrderDate);
+		
+		tfOrderDate.setBounds(150, 150, 200, 30);
+		tfOrderDate.setFont(new Font("Tahoma", 0, 16));
+		jf.add(tfOrderDate);
+		
+		lbId.setBounds(50, 200, 100, 30);
+		lbId.setFont(new Font("Tahoma", 0, 16));
+		jf.add(lbId);
+		
+		tfId.setBounds(150, 200, 200, 30);
+		tfId.setFont(new Font("Tahoma", 0, 16));
+		jf.add(tfId);
+		
+		lbProductId.setBounds(50, 250, 100, 30);
+		lbProductId.setFont(new Font("Tahoma", 0, 16));
+		jf.add(lbProductId);
+		
+		tfProductId.setBounds(150, 250, 200, 30);
+		tfProductId.setFont(new Font("Tahoma", 0, 16));
+		jf.add(tfProductId);
+		
+		lbQuantityOrder.setBounds(50, 300, 130, 30);
+		lbQuantityOrder.setFont(new Font("Tahoma", 0, 16));
+		jf.add(lbQuantityOrder);
+		
+		tfQuantityOrder.setBounds(150, 300, 200, 30);
+		tfQuantityOrder.setFont(new Font("Tahoma", 0, 16));
+		jf.add(tfQuantityOrder);
+		
+		jf.setLocation(600, 50);
+		jf.setSize(420, 520);
+		jf.setVisible(true);
+		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+	}
+	public static void main(String[] args) {
+		new OrderGUI();
+	}
+}
