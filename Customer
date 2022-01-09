@@ -1,0 +1,216 @@
+package Form;
+
+import ConnectSQL.ConnectDB;
+import com.toedter.calendar.JDateChooser;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+public class Customer extends JFrame {
+    ConnectDB conn = new ConnectDB();
+    PreparedStatement ps;
+    ResultSet rs;
+    JFrame jFrame = new JFrame();
+    JLabel lbTitle = new JLabel("Quản Lý Đặt Vé Xe");
+    JPanel jpChinh = new JPanel();
+
+    JLabel lbMV = new JLabel("Mã Vé");
+    JTextField tfMV = new JTextField();
+    JTextField tfmatuyen = new JTextField();
+    JLabel lbnoidi = new JLabel("Nơi Đi");
+    JTextField tfnoidi = new JTextField();
+    JLabel lbnoiden = new JLabel("Nơi Đến");
+    JTextField tfnoiden = new JTextField();
+    JLabel lbLoaive = new JLabel("Loại Vé");
+    JTextField tfLoaive = new JTextField();
+    JLabel lbBienSoxe = new JLabel("Biển Số");
+    JTextField tfBienSoxe = new JTextField();
+    JLabel lbtGioKH = new JLabel("Khởi hành lúc");
+    JTextField tfGioKH = new JTextField();
+    JLabel lbNgayDi = new JLabel("Ngày đi");
+    JDateChooser tfNgayDi = new JDateChooser();
+    JLabel lbGhe = new JLabel("Số Ghế");
+    JButton bttGhe = new JButton("Chọn Ghế");
+
+    JTable tblDSTuyen = new JTable();
+
+    JButton bttDatVe = new JButton("Đặt Vé");
+    JButton bttHuy = new JButton("Hủy Vé");
+    JButton bttCapNhat = new JButton("Cập Nhật");
+
+    public Customer(){
+        jFrame.setLayout(null);
+
+        lbTitle.setBounds(170,20,500,40);
+        lbTitle.setFont(new Font("Times New Roman", Font.BOLD, 28));
+        jFrame.add(lbTitle);
+
+        jpChinh.setLayout(null);
+        Border bdChinh = BorderFactory.createLineBorder(Color.black);
+        TitledBorder tlbChinh = new TitledBorder(bdChinh, "Thông tin chính");
+        tlbChinh.setTitleFont(new Font("Times New Roman", 0, 14));
+        jpChinh.setBorder(tlbChinh);
+        jpChinh.setBounds(20,70,1150,550);
+        jFrame.add(jpChinh);
+
+        ThongTinDatVe();
+        ThongTinTuyenDuong();
+        ChucNang();
+
+        jFrame.setSize(1200,720);
+        jFrame.setLocationRelativeTo(null);
+        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        jFrame.setVisible(true);
+    }
+
+    public void ThongTinDatVe(){
+        JPanel pnDatve = new JPanel();
+        pnDatve.setLayout(null);
+        Border bddatve = BorderFactory.createLineBorder(Color.black);
+        TitledBorder tlbdatve = new TitledBorder(bddatve, "Thông tin đặt vé");
+        tlbdatve.setTitleFont(new Font("Times New Roman", 0, 14));
+        pnDatve.setBorder(tlbdatve);
+        pnDatve.setBounds(20,30,290,370);
+        jpChinh.add(pnDatve);
+
+        lbMV.setBounds(40,40,100,20);
+        lbMV.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+        pnDatve.add(lbMV);
+
+        tfMV.setBounds(120,40,130,20);
+        tfMV.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+        tfMV.setHorizontalAlignment(JTextField.CENTER);
+        tfMV.setEditable(false);
+        pnDatve.add(tfMV);
+
+        lbnoidi.setBounds(40,80,100,20);
+        lbnoidi.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+        pnDatve.add(lbnoidi);
+
+        tfnoidi.setBounds(120,80,130,20);
+        tfnoidi.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+        tfnoidi.setHorizontalAlignment(JTextField.CENTER);
+        tfnoidi.setEditable(false);
+        pnDatve.add(tfnoidi);
+
+
+        lbnoiden.setBounds(40,120,100,20);
+        lbnoiden.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+        pnDatve.add(lbnoiden);
+
+        tfnoiden.setBounds(120,120,130,20);
+        tfnoiden.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+        tfnoiden.setHorizontalAlignment(JTextField.CENTER);
+        tfnoiden.setEditable(false);
+        pnDatve.add(tfnoiden);
+
+        lbtGioKH.setBounds(40,160,100,20);
+        lbtGioKH.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+        pnDatve.add(lbtGioKH);
+
+        tfGioKH.setBounds(120,160,130,20);
+        tfGioKH.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+        tfGioKH.setHorizontalAlignment(JTextField.CENTER);
+        tfGioKH.setEditable(false);
+        pnDatve.add(tfGioKH);
+
+        lbLoaive.setBounds(40,200,100,20);
+        lbLoaive.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+        pnDatve.add(lbLoaive);
+
+        tfLoaive.setBounds(120,200,130,20);
+        tfLoaive.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+        tfLoaive.setHorizontalAlignment(JTextField.CENTER);
+        tfLoaive.setEditable(false);
+        pnDatve.add(tfLoaive);
+
+        lbBienSoxe.setBounds(40,240,100,20);
+        lbBienSoxe.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+        pnDatve.add(lbBienSoxe);
+
+        tfBienSoxe.setBounds(120,240,130,20);
+        tfBienSoxe.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+        tfBienSoxe.setHorizontalAlignment(JTextField.CENTER);
+        tfBienSoxe.setEditable(false);
+        pnDatve.add(tfBienSoxe);
+
+        lbNgayDi.setBounds(40,280,100,20);
+        lbNgayDi.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+        pnDatve.add(lbNgayDi);
+
+        tfNgayDi.setBounds(120,280,130,20);
+        tfNgayDi.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+        pnDatve.add(tfNgayDi);
+
+        lbGhe.setBounds(40,320,100,20);
+        lbGhe.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+        pnDatve.add(lbGhe);
+
+        bttGhe.setBounds(120,320,130,20);
+        bttGhe.setFont(new Font("Times New Roman", Font.BOLD, 15));
+        pnDatve.add(bttGhe);
+    }
+
+    public void ThongTinTuyenDuong(){
+        JPanel jpTuyen = new JPanel();
+        jpTuyen.setLayout(null);
+        Border bdTuyen = BorderFactory.createLineBorder(Color.black);
+        TitledBorder tlbTuyen = new TitledBorder(bdTuyen, "Thông Tin Tuyến Đường");
+        jpTuyen.setBorder(tlbTuyen);
+        jpTuyen.setBounds(330,30,800,260);
+        jpChinh.add(jpTuyen);
+
+        DefaultTableModel model = (DefaultTableModel) tblDSTuyen.getModel();
+        model.setColumnIdentifiers(new Object[]{"Mã Tuyến","Nơi Đi","Nơi Đến","Biển Số Xe","Loại Vé","Giờ đi","Giá"});
+        JScrollPane sp = new JScrollPane(tblDSTuyen);
+        sp.setBounds(20,20,750,220);
+        jpTuyen.add(sp);
+
+        try{
+            String selectDSTuyen = "Select * from TuyenDuong";
+            ps = conn.connectSQL().prepareStatement(selectDSTuyen);
+            rs = ps.executeQuery();
+            while(rs.next()){
+                Object ob[] =  {rs.getString("MaTuyen"),rs.getString("NoiDi"),
+                                rs.getString("NoiDen"),rs.getString("BienSoXe"),
+                                rs.getString("LoaiVe"),rs.getString("GioKhoiHanh"),rs.getString("GIA")};
+                model.addRow(ob);
+            }
+
+        } catch (Exception e1){
+            e1.printStackTrace();
+        }
+    }
+
+    public void ChucNang(){
+        JPanel jpChucNang = new JPanel();
+        jpChucNang.setLayout(null);
+        Border bdChucNang = BorderFactory.createLineBorder(Color.black);
+        TitledBorder tlbChucNang = new TitledBorder(bdChucNang, "Chức Năng Chính");
+        jpChucNang.setBorder(tlbChucNang);
+        jpChucNang.setBounds(20,410,290,120);
+        jpChinh.add(jpChucNang);
+
+        bttDatVe.setBounds(40,40,100,30);
+        bttDatVe.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+        jpChucNang.add(bttDatVe);
+
+        bttHuy.setBounds(150,40,100,30);
+        bttHuy.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+        jpChucNang.add(bttHuy);
+
+        bttCapNhat.setBounds(85,80,100,30);
+        bttCapNhat.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+        jpChucNang.add(bttCapNhat);
+    }
+
+    public static void main(String[] args) {
+        new Customer();
+    }
+
+}
