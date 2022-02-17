@@ -25,7 +25,7 @@ public class Customer extends JFrame {
     JPanel jpTitle = new JPanel();
 
     JLabel lbCustomer = new JLabel("Tài khoản:");
-    JLabel tfCustomer = new JLabel("ducdinh123");
+    JLabel tfCustomer = new JLabel();
     JLabel lbMV = new JLabel("Mã Vé");
     JTextField tfMV = new JTextField();
     JTextField tfmatuyen = new JTextField();
@@ -52,14 +52,17 @@ public class Customer extends JFrame {
     JButton bttHuy = new JButton("Hủy Vé");
     JButton bttCapNhat = new JButton("Cập Nhật");
     JButton bttInf = new JButton("Thông Tin Cá Nhân");
-    JButton bttThoat = new JButton("Thoát");
+    JButton bttThoat = new JButton("Đăng Xuất");
 
     JLabel txtNgayDatVeCu = new JLabel("");
     JLabel txtGheDatCu = new JLabel("");
 
-    public Customer(){
+    public Customer(JTextField tfuser){
         jFrame.setLayout(null);
         jpTitle.setLayout(null);
+
+        tfCustomer.setText(tfuser.getText());
+
         Border bdTitle = BorderFactory.createLineBorder(Color.black);
         TitledBorder tlbTitle = new TitledBorder(bdTitle, "Đề Tài Cuối Kỳ Java");
         tlbTitle.setTitleFont(new Font("Times New Roman", 0, 14));
@@ -86,6 +89,7 @@ public class Customer extends JFrame {
         DanhSachDatVe();
         ThongTinSinhVienThucHien();
         ThoatTaiKhoan();
+//        HienThiDSDatVe();
 
 
         jFrame.setSize(1180,720);
@@ -274,6 +278,8 @@ public class Customer extends JFrame {
             }
         });
     }
+
+
 
     public void DanhSachGheTrong(){
         JFrame jfDsGhe = new JFrame();
@@ -650,9 +656,19 @@ public class Customer extends JFrame {
         bttInf.setFont(new Font("Times New Roman", Font.BOLD, 15));
         jpChucNang.add(bttInf);
 
-        bttThoat.setBounds(560,50,100,30);
+
+        bttThoat.setBounds(560,50,120,30);
         bttThoat.setFont(new Font("Times New Roman", Font.BOLD, 15));
         jpChucNang.add(bttThoat);
+
+        bttInf.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Information i = new Information(tfCustomer);
+                i.setVisible(true);
+                i.setVisible(false);
+            }
+        });
 
         bttDatVe.addActionListener(new ActionListener() {
             @Override
@@ -697,21 +713,21 @@ public class Customer extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try{
-                    String ChinhSuaVesql = "update DatGhe set TinhTrang = N'Trống' where NgayDatVe=? and SoGhe=?\n" +
-                            "Update DatVeXe set MaTuyen = ?, NgayDatVe=?, Stt=? where MaVe=?";
+                    String ChinhSuaVesql = "Update DatVeXe set MaTuyen = ?, NgayDatVe=?, Stt=? where MaVe=?";
                     ps = conn.connectSQL().prepareStatement(ChinhSuaVesql);
-                    ps.setString(1, txtNgayDatVeCu.getText());
-                    ps.setString(2, txtGheDatCu.getText());
-                    ps.setString(3, tfmatuyen.getText());
-                    ps.setString(4, ((JTextField) tfNgayDi.getDateEditor().getUiComponent()).getText());
-                    ps.setString(5, tfMaGhe.getText());
-                    ps.setString(6, tfMV.getText());
+                    ps.setString(1, tfmatuyen.getText());
+                    ps.setString(2, ((JTextField) tfNgayDi.getDateEditor().getUiComponent()).getText());
+                    ps.setString(3, tfMaGhe.getText());
+                    ps.setString(4, tfMV.getText());
                     int record = ps.executeUpdate();
                     if(record>0){
                         try{
-                            String DatGhesql = "update DatGhe set TinhTrang = N'Đã Đặt' where Stt=?";
+                            String DatGhesql = "update DatGhe set TinhTrang = N'Trống' where NgayDatVe=? and SoGhe=?\n" +
+                                    "update DatGhe set TinhTrang = N'Đã Đặt' where Stt=?";
                             ps = conn.connectSQL().prepareStatement(DatGhesql);
-                            ps.setString(1, tfMaGhe.getText());
+                            ps.setString(1, txtNgayDatVeCu.getText());
+                            ps.setString(2, txtGheDatCu.getText());
+                            ps.setString(3, tfMaGhe.getText());
                             int records = ps.executeUpdate();
                             if(records>0){
                                 JOptionPane.showMessageDialog(rootPane, "Cập Nhật Thành Công");
@@ -723,7 +739,34 @@ public class Customer extends JFrame {
                         }
                     }
                 } catch (Exception e1){
-                    e1.printStackTrace();
+                    try{
+                        String ChinhSuaVesql = "Update DatVeXe set NgayDatVe=?, Stt=? where MaVe=?";
+                        ps = conn.connectSQL().prepareStatement(ChinhSuaVesql);
+                        ps.setString(1, ((JTextField) tfNgayDi.getDateEditor().getUiComponent()).getText());
+                        ps.setString(2, tfMaGhe.getText());
+                        ps.setString(3, tfMV.getText());
+                        int record = ps.executeUpdate();
+                        if(record>0){
+                            try{
+                                String DatGhesql = "update DatGhe set TinhTrang = N'Trống' where NgayDatVe=? and SoGhe=?\n" +
+                                        "update DatGhe set TinhTrang = N'Đã Đặt' where Stt=?";
+                                ps = conn.connectSQL().prepareStatement(DatGhesql);
+                                ps.setString(1, txtNgayDatVeCu.getText());
+                                ps.setString(2, txtGheDatCu.getText());
+                                ps.setString(3, tfMaGhe.getText());
+                                int records = ps.executeUpdate();
+                                if(records>0){
+                                    JOptionPane.showMessageDialog(rootPane, "Cập Nhật Thành Công");
+                                    HienThiDSDatVe();
+                                    ResetText();
+                                }
+                            }catch (Exception e2) {
+
+                            }
+                        }
+                    } catch (Exception e3){
+                        e3.printStackTrace();
+                    }
                 }
             }
         });
@@ -773,8 +816,5 @@ public class Customer extends JFrame {
         bttGhe.setText("Chọn Ghế");
     }
 
-    public static void main(String[] args) {
-        new Customer();
-    }
 
 }

@@ -173,6 +173,10 @@ public class DangKy extends JFrame {
                     int record = ps.executeUpdate();
                     if(record>0){
                         JOptionPane.showMessageDialog(rootPane, "Đăng Ký Thành Công");
+                        DangNhap dn = new DangNhap();
+                        jf.setVisible(false);
+                        dn.setVisible(true);
+                        dn.setVisible(false);
                     }
                 } catch(Exception e1){
                     e1.printStackTrace();
@@ -189,7 +193,4 @@ public class DangKy extends JFrame {
         });
     }
 
-    public static void main(String[] args) {
-        new DangKy();
-    }
 }

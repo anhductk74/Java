@@ -5,6 +5,7 @@ import com.toedter.calendar.JDateChooser;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,6 +20,8 @@ public class Manage extends JFrame {
     PreparedStatement ps;
     ResultSet rs;
     JFrame jFrame = new JFrame();
+    JLabel lbManage = new JLabel("Manager:");
+    JLabel tfManage = new JLabel("");
     JLabel lbTitle = new JLabel("Thông Tin Đặt Vé");
     JLabel lbMaKH = new JLabel("Mã Vé");
     JTextField tfMV = new JTextField();
@@ -45,16 +48,25 @@ public class Manage extends JFrame {
     JTextField tftimkiem = new JTextField();
     JButton bttTimkiem = new JButton("Tìm kiếm");
     JButton bttThanhtoan = new JButton("Thanh toán");
+    JButton bttThongKe = new JButton("Thống kê");
+    JButton bttDangXuat = new JButton("Đăng xuất");
     public Manage(){
         jFrame.setLayout(null);
         jFrame.setResizable(false);
+
+        lbManage.setFont(new Font("Times New Roman", Font.BOLD,17));
+        lbManage.setBounds(930,65,150,30);
+        jFrame.add(lbManage);
+        tfManage.setFont(new Font("Times New Roman", Font.BOLD,17));
+        tfManage.setBounds(1005,65,150,30);
+        jFrame.add(tfManage);
 
         ThongTinDatVe();
         DSDatVe();
         chucnang();
 
 
-        jFrame.setSize(1180,850);
+        jFrame.setSize(1180,700);
         jFrame.setLocationRelativeTo(null);
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.setVisible(true);
@@ -145,14 +157,28 @@ public class Manage extends JFrame {
         Border bddsdatve = BorderFactory.createLineBorder(Color.black);
         TitledBorder tlbdsdatve = new TitledBorder(bddsdatve, "Danh Sách Đặt Vé");
         pndsdatve.setBorder(tlbdsdatve);
-        pndsdatve.setBounds(50,300,1050,300);
-
+        pndsdatve.setBounds(50,300,1050,180);
         JScrollPane sp = new JScrollPane(tbdsDatVe);
         DefaultTableModel model = (DefaultTableModel) tbdsDatVe.getModel();
-        model.setColumnIdentifiers(new Object[]{"Mã Vé","Tên KH","Ngày Đặt Vé","Nơi Đi","Nơi Đến","Loại Vé","Biển Số Xe","Giờ đi","Số Ghê","Giá"});
+        model.setColumnIdentifiers(new Object[]{"Mã Vé","Tên KH","Ngày Đặt Vé","Nơi Đi","Nơi Đến","Loại Vé","Biển Số Xe","Giờ đi","Số Ghê","Giá","Tình Trạng"});
+        tbdsDatVe.getColumnModel().getColumn(0).setPreferredWidth(10);
+        tbdsDatVe.getColumnModel().getColumn(3).setPreferredWidth(40);
+        tbdsDatVe.getColumnModel().getColumn(4).setPreferredWidth(40);
+        tbdsDatVe.getColumnModel().getColumn(5).setPreferredWidth(40);
+        tbdsDatVe.getColumnModel().getColumn(8).setPreferredWidth(10);
+        tbdsDatVe.getColumnModel().getColumn(9).setPreferredWidth(40);
         pndsdatve.add(sp);
+
+        DSDatVeSQL(model);
+        LayDuLieu();
+        buttonTiemKiem(model);
+        setBttThanhtoan(model);
+        jFrame.add(pndsdatve);
+    }
+    public void DSDatVeSQL(DefaultTableModel model){
+        model.setRowCount(0);
         try{
-            String selectDSDatVe = "select Distinct MaVe, HoTen, DatVeXe.NgayDatVe, NoiDi, NoiDen, LOAIVE, BienSoXe, GioKhoiHanh, SoGhe, GIA\n" +
+            String selectDSDatVe = "select Distinct MaVe, HoTen, DatVeXe.NgayDatVe, NoiDi, NoiDen, LOAIVE, BienSoXe, GioKhoiHanh, SoGhe, GIA, DatVeXe.TinhTrang\n" +
                     "from DatVeXe, Customer, DatGhe, NgayDat, TuyenDuong where\n" +
                     "DatVeXe.MaTuyen = TuyenDuong.MaTuyen\n" +
                     "and DatVeXe.NgayDatVe = NgayDat.NgayDatVe\n" +
@@ -164,17 +190,15 @@ public class Manage extends JFrame {
                 Object ob[] =  {rs.getString("MaVe"),rs.getString("HoTen"),rs.getString("NgayDatVe"),
                         rs.getString("NoiDi"),rs.getString("NoiDen"),
                         rs.getString("LOAIVE"),rs.getString("BienSoXe"),
-                        rs.getString("GioKhoiHanh"),rs.getString("SoGhe"),rs.getString("GIA"),};
+                        rs.getString("GioKhoiHanh"),rs.getString("SoGhe"),rs.getString("GIA"),rs.getString("TinhTrang")};
                 model.addRow(ob);
             }
 
         } catch (Exception e1){
             e1.printStackTrace();
         }
-        LayDuLieu();
-        buttonTiemKiem(model);
-        jFrame.add(pndsdatve);
     }
+
 
     public void LayDuLieu(){
         tbdsDatVe.addMouseListener(new MouseAdapter() {
@@ -201,7 +225,7 @@ public class Manage extends JFrame {
         Border bdchucnang = BorderFactory.createLineBorder(Color.black);
         TitledBorder tlbchucnang = new TitledBorder(bdchucnang, "Tìm kiếm");
         pnchucnang.setBorder(tlbchucnang);
-        pnchucnang.setBounds(50,620,700,100);
+        pnchucnang.setBounds(50,500,1050,100);
 
         cbtimkiem.setBounds(50,35,150,30);
         pnchucnang.add(cbtimkiem);
@@ -209,17 +233,43 @@ public class Manage extends JFrame {
         tftimkiem.setBounds(220,35,150,30);
         pnchucnang.add(tftimkiem);
 
-        bttTimkiem.setBounds(390,35,150,30);
+        bttTimkiem.setBounds(390,35,130,30);
         pnchucnang.add(bttTimkiem);
 
-        bttThanhtoan.setBounds(560,35,150,30);
+        bttThanhtoan.setBounds(540,35,130,30);
         pnchucnang.add(bttThanhtoan);
 
+        bttThongKe.setBounds(700,35,130,30);
+        pnchucnang.add(bttThongKe);
+        ThongKe();
 
+        bttDangXuat.setBounds(850,35,130,30);
+        pnchucnang.add(bttDangXuat);
+        bttDangXuat.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jFrame.setVisible(false);
+                DangNhap dn = new DangNhap();
+                dn.setVisible(true);
+                dn.setVisible(false);
+            }
+        });
 
 
         jFrame.add(pnchucnang);
     }
+
+    public void ThongKe(){
+        bttThongKe.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ThongKe tk = new ThongKe();
+                tk.setVisible(true);
+                tk.setVisible(false);
+            }
+        });
+    }
+
 
     public void buttonTiemKiem(DefaultTableModel model){
         bttTimkiem.addActionListener(new ActionListener() {
@@ -233,7 +283,7 @@ public class Manage extends JFrame {
                     timkiem.setText("HoTen");
                 }
                 try {
-                    String timkiemsql = "select Distinct MaVe, HoTen, DatVeXe.NgayDatVe, NoiDi, NoiDen, LOAIVE, BienSoXe, GioKhoiHanh, SoGhe, GIA\n" +
+                    String timkiemsql = "select Distinct MaVe, HoTen, DatVeXe.NgayDatVe, NoiDi, NoiDen, LOAIVE, BienSoXe, GioKhoiHanh, SoGhe, GIA, DatVeXe.TinhTrang\n" +
                             "                    from DatVeXe, Customer, DatGhe, NgayDat, TuyenDuong where\n" +
                             "                    DatVeXe.MaTuyen = TuyenDuong.MaTuyen\n" +
                             "                    and DatVeXe.NgayDatVe = NgayDat.NgayDatVe\n" +
@@ -242,12 +292,13 @@ public class Manage extends JFrame {
                             "                    and "+timkiem.getText()+" = N'"+tftimkiem.getText()+"'";
                     ps = conn.connectSQL().prepareStatement(timkiemsql);
                     rs = ps.executeQuery();
+                    model.setRowCount(0);
                     while(rs.next()){
-                        model.setRowCount(0);
+
                         Object ob[] =  {rs.getString("MaVe"),rs.getString("HoTen"),rs.getString("NgayDatVe"),
                                 rs.getString("NoiDi"),rs.getString("NoiDen"),
                                 rs.getString("LOAIVE"),rs.getString("BienSoXe"),
-                                rs.getString("GioKhoiHanh"),rs.getString("SoGhe"),rs.getString("GIA"),};
+                                rs.getString("GioKhoiHanh"),rs.getString("SoGhe"),rs.getString("GIA"),rs.getString("TinhTrang")};
                         model.addRow(ob);
                     }
                 } catch (Exception e1){
@@ -257,7 +308,38 @@ public class Manage extends JFrame {
         });
     }
 
-    public static void main(String[] args) {
-        new Manage();
+    public void setBttThanhtoan(DefaultTableModel model){
+        bttThanhtoan.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try{
+                    String thanhtoansql = "Update DatVeXe set TinhTrang = 'Đã Thanh Toán' where MaVe = ?";
+                    ps= conn.connectSQL().prepareStatement(thanhtoansql);
+                    ps.setString(1, tfMV.getText());
+                    int record = ps.executeUpdate();
+                    if(record>0){
+                        JOptionPane.showMessageDialog(null, "Thanh toán thành công");
+                        DSDatVeSQL(model);
+                        ResetText();
+                    }
+                }catch(Exception e1){
+                    e1.printStackTrace();
+                }
+            }
+        });
     }
+
+    public void ResetText(){
+        tfMV.setText("");
+        tfName.setText("");
+        tfnoidi.setText("");
+        tfnoiden.setText("");
+        tfGioKH.setText("");
+        tfLoaive.setText("");
+        tfBienSoxe.setText("");
+        tfNgayDi.setText("");
+        tfGhe.setText("");
+    }
+
+
 }

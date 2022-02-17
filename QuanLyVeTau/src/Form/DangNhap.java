@@ -6,7 +6,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -18,14 +17,13 @@ public class DangNhap extends JFrame {
     JLabel lbDN = new JLabel("Đăng Nhập");
     JLabel lbUser = new JLabel("Tên đăng nhập");
     JLabel lbPass = new JLabel("Mật khẩu");
-    JTextField tfUser = new JTextField();
+    JTextField tfUser = new JTextField("");
     JPasswordField tfPass = new JPasswordField();
     JRadioButton rbManage = new JRadioButton("Quản Lý");
     JRadioButton rbCustomer = new JRadioButton("Hành Khách");
     ButtonGroup btgUser = new ButtonGroup();
     JButton bttDN = new JButton("Đăng Nhập");
     JButton bttDK = new JButton("Đăng Ký");
-    JButton bttQuenPass = new JButton("Quên Mật Khẩu");
 
     public DangNhap(){
         btgUser.add(rbCustomer);
@@ -68,9 +66,6 @@ public class DangNhap extends JFrame {
         bttDK.setFont(new Font("tahoma",Font.BOLD,16));
         jf.add(bttDK);
 
-        bttQuenPass.setBounds(130,330,150,15);
-        bttQuenPass.setFont(new Font("tahoma",Font.BOLD,10));
-        jf.add(bttQuenPass);
 
 
 
@@ -89,11 +84,10 @@ public class DangNhap extends JFrame {
 
                         if (rs.next()) {
                             System.out.println("Manage");
-//                            Home h = new Home();
-//                            h.setVisible(true);
-//                            h.lbtdn.setText(tfUser.getText());
-//                            h.setVisible(false);
-
+                            Manage manage = new Manage();
+                            manage.setVisible(true);
+                            manage.setVisible(false);
+                            manage.tfManage.setText(tfUser.getText().trim());
                         } else {
                             JOptionPane.showMessageDialog(null, "Tài khoản không chính xác");
                         }
@@ -119,8 +113,7 @@ public class DangNhap extends JFrame {
 
                         if (rs.next()) {
                             System.out.println("Customer");
-                            Customer c = new Customer();
-                            c.tfCustomer.setText(tfUser.getText());
+                            Customer c = new Customer(tfUser);
                             c.setVisible(true);
                             c.setVisible(false);
                             jf.setVisible(false);
@@ -139,6 +132,8 @@ public class DangNhap extends JFrame {
                             e2.printStackTrace();
                         }
                     }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Chưa chọn quyền đăng nhập");
                 }
             }
         });
